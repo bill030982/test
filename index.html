@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>地球 — 我們唯一的家園 | Planet Earth</title>
+  <meta name="description" content="一覽壯麗的地球高解析度全貌，探索這顆孕育八十億生命、漂浮於浩瀚宇宙中的蔚藍星球。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 背景星空 Canvas -->
+  <canvas id="starfield" class="starfield"></canvas>
+
+  <!-- 頂部導航列 -->
+  <header class="site-header">
+    <div class="header-brand">
+      <span class="brand-symbol">⊕</span>
+      <div class="brand-text">
+        <span class="brand-title">EARTH OBSERVATORY</span>
+        <span class="brand-subtitle">地球觀測站</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="audio-toggle" class="btn-icon" title="切換深空環境音" aria-label="切換深空環境音">
+        <svg class="icon sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <line x1="23" y1="9" x2="17" y2="15"></line>
+          <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+        <svg class="icon sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none;">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+        <span class="btn-text">環境音</span>
+      </button>
+
+      <button id="fullscreen-btn" class="btn-icon" title="全螢幕欣賞" aria-label="全螢幕欣賞">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+        <span class="btn-text">全螢幕</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主展示區塊 -->
+  <main class="main-container">
+    <!-- 標題與簡介 -->
+    <section class="intro-section">
+      <div class="badge-tag">SOLAR SYSTEM · THIRD ROCK FROM THE SUN</div>
+      <h1 class="main-title">地球 · <span class="en-title">PLANET EARTH</span></h1>
+      <p class="subtitle">
+        在浩瀚寂靜的宇宙暗夜中，唯一閃爍著生命光芒的蔚藍孤島。八十億人的家園，所有愛、希望與歷史的起點。
+      </p>
+    </section>
+
+    <!-- 地球核心展示舞台 -->
+    <section class="earth-stage-wrapper">
+      <div class="earth-stage" id="earth-stage">
+        <!-- 柔和的大氣光暈外環 -->
+        <div class="atmosphere-halo" aria-hidden="true"></div>
+
+        <!-- 地球主照片容器 -->
+        <div class="earth-frame" id="earth-frame">
+          <img 
+            id="earth-image" 
+            src="assets/earth.jpg" 
+            alt="從太空視角拍攝的高解析度地球照片，展現蔚藍海洋、白色渦旋雲系與非洲及歐洲大陸"
+            class="earth-img filter-natural"
+            draggable="false"
+          >
+
+          <!-- 互動探索熱點 Hotspots -->
+          <div class="hotspots-container" id="hotspots-container">
+            <!-- 熱點 1: 撒哈拉沙漠 -->
+            <button class="hotspot" style="top: 38%; left: 48%;" data-title="撒哈拉沙漠 (Sahara Desert)" data-desc="世界最大的熱帶荒漠，覆蓋超過 900 萬平方公里。金黃色的沙海在軌道上清晰可辨，為大西洋輸送富含礦物的風塵。">
+              <span class="hotspot-pulse"></span>
+              <span class="hotspot-dot"></span>
+              <span class="hotspot-label">撒哈拉沙漠</span>
+            </button>
+
+            <!-- 熱點 2: 地中海流域 -->
+            <button class="hotspot" style="top: 29%; left: 56%;" data-title="地中海與歐洲文明圈 (Mediterranean)" data-desc="被歐亞非大陸環繞的陸間海，孕育了古希臘、羅馬與無數璀璨歷史，蔚藍的水體與半島海岸線輪廓分明。">
+              <span class="hotspot-pulse"></span>
+              <span class="hotspot-dot"></span>
+              <span class="hotspot-label">地中海</span>
+            </button>
+
+            <!-- 熱點 3: 剛果雨林盆地 -->
+            <button class="hotspot" style="top: 58%; left: 53%;" data-title="剛果盆地雨林 (Congo Basin)" data-desc="地球的「第二顆綠色肺臟」，擁有世界第二大熱帶雨林，調節全球氣候並庇護數千種瀕危物種。">
+              <span class="hotspot-pulse"></span>
+              <span class="hotspot-dot"></span>
+              <span class="hotspot-label">剛果雨林</span>
+            </button>
+
+            <!-- 熱點 4: 大西洋雲系渦旋 -->
+            <button class="hotspot" style="top: 68%; left: 34%;" data-title="海洋氣象渦旋 (Atlantic Weather System)" data-desc="南大西洋上空的壯麗冷暖鋒面與低壓渦旋，展示了地球流體動力學與水循環的無盡生命力。">
+              <span class="hotspot-pulse"></span>
+              <span class="hotspot-dot"></span>
+              <span class="hotspot-label">大西洋渦旋</span>
+            </button>
+
+            <!-- 熱點 5: 大氣邊緣弧光 -->
+            <button class="hotspot" style="top: 14%; left: 50%;" data-title="大氣層邊緣 (Atmospheric Limb)" data-desc="厚度僅約 100 公里的脆弱氣體薄膜（卡門線）。正是這抹微弱的深藍弧光，抵擋了致命的宇宙射線，守護所有生命。">
+              <span class="hotspot-pulse"></span>
+              <span class="hotspot-dot"></span>
+              <span class="hotspot-label">大氣層緣</span>
+            </button>
+          </div>
+
+          <!-- 提示標籤 -->
+          <div class="stage-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hint-icon">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>滑鼠移動感受 3D 視差，點擊熱點探索地表特徵</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 控制工具列 -->
+      <div class="control-deck">
+        <!-- 視角濾鏡切換 -->
+        <div class="filter-group">
+          <span class="filter-title">光學模式</span>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="filter-natural">真彩光學 (Natural)</button>
+            <button class="filter-btn" data-filter="filter-atmosphere">大氣藍光 (Aura)</button>
+            <button class="filter-btn" data-filter="filter-contrast">深空高對比 (Deep Space)</button>
+            <button class="filter-btn" data-filter="filter-ocean">海洋光譜 (Oceanic)</button>
+          </div>
+        </div>
+
+        <!-- 輔助切換開關 -->
+        <div class="toggle-group">
+          <button id="toggle-hotspots" class="action-btn active" title="顯示或隱藏地表註釋">
+            <span class="btn-indicator"></span>地表熱點
+          </button>
+          <button id="toggle-rotation" class="action-btn" title="開啟柔和動態漂移">
+            <span class="btn-indicator"></span>自轉巡航
+          </button>
+          <button id="open-zoom-modal" class="action-btn" title="放大深入檢視細節">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="11" y1="8" x2="11" y2="14"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+            高倍檢視
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 地球遙測數據看板 (Planetary Telemetry) -->
+    <section class="telemetry-section">
+      <div class="section-header">
+        <h2 class="section-title">行星數據看板 <span class="en-sub">PLANETARY TELEMETRY</span></h2>
+        <span class="telemetry-status"><span class="status-dot"></span> 軌道監測正常 · 1.000 AU</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">赤道直徑 · EQUATORIAL DIAMETER</div>
+          <div class="metric-value">12,742 <span class="unit">km</span></div>
+          <div class="metric-detail">約為月球直徑的 3.66 倍，極直徑 12,714 km</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">公轉軌道速度 · ORBITAL VELOCITY</div>
+          <div class="metric-value">29.78 <span class="unit">km/s</span></div>
+          <div class="metric-detail">時速約 107,200 km，繞行太陽一圈需 365.25 日</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">地表水陸比例 · SURFACE RATIO</div>
+          <div class="metric-value">71% : 29%</div>
+          <div class="metric-detail">海洋面積 3.61 億平方公里，總儲水量達 13.8 億立方公里</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">大氣主要成分 · ATMOSPHERE</div>
+          <div class="metric-value">78% N₂ · 21% O₂</div>
+          <div class="metric-detail">微量氬氣 (0.93%) 與二氧化碳，平均氣壓 101.325 kPa</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">地表平均溫度 · MEAN SURFACE TEMP</div>
+          <div class="metric-value">+14.9 <span class="unit">°C</span></div>
+          <div class="metric-detail">溫室效應使地球溫度維持在生命最適宜的液態水區間</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">當前人類總人口 · TOTAL POPULATION</div>
+          <div class="metric-value">80.9 <span class="unit">億</span></div>
+          <div class="metric-detail">此時此刻共同居住於這顆藍色星球上的生命同胞</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 經典哲思卡片：暗淡藍點 -->
+    <section class="quote-section">
+      <blockquote class="pale-blue-dot-card">
+        <div class="quote-mark">“</div>
+        <p class="quote-text-tw">
+          再看看那個光點。那是這裡。那是家。那是我們。所有你所愛的人、你認識的人、你聽說過的人，以及曾經存在過的所有人類，都在這上面度過了他們的一生……這顆懸浮在陽光中的塵埃微粒。
+        </p>
+        <p class="quote-text-en">
+          “Look again at that dot. That's here. That's home. That's us. On it everyone you love, everyone you know, everyone you ever heard of, every human being who ever was, lived out their lives... on a mote of dust suspended in a sunbeam.”
+        </p>
+        <footer class="quote-author">
+          <cite>— 卡爾·薩根 (Carl Sagan) 《暗淡藍點》（Pale Blue Dot）</cite>
+        </footer>
+      </blockquote>
+    </section>
+  </main>
+
+  <!-- 頁腳 -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <span class="footer-title">PLANET EARTH OBSERVATORY</span>
+        <span class="footer-desc">獻給所有熱愛探索與珍惜地球的旅人</span>
+      </div>
+      <div class="footer-right">
+        <span>影像來源：Apollo & Deep Space Observational Photography</span>
+        <span>設計：純淨現代網頁工藝 · HTML5 / Vanilla CSS / JS</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 熱點詳細資訊彈窗 Modal -->
+  <div id="info-modal" class="modal" aria-hidden="true" role="dialog">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close" aria-label="關閉彈窗">✕</button>
+      <div class="modal-badge">GEOLOGICAL & ATMOSPHERIC FEATURE</div>
+      <h3 id="modal-title" class="modal-title">特徵名稱</h3>
+      <p id="modal-desc" class="modal-desc">特徵詳細敘述...</p>
+    </div>
+  </div>
+
+  <!-- 高解析度照片放大檢視 Modal -->
+  <div id="zoom-modal" class="zoom-modal" aria-hidden="true">
+    <div class="zoom-header">
+      <span class="zoom-title">高解析度地球影像全視角 (Ultra-HD Inspection)</span>
+      <div class="zoom-actions">
+        <span class="zoom-help">滑鼠滾輪縮放 · 拖曳平移</span>
+        <button id="zoom-reset-btn" class="btn-text-sm">重設視角</button>
+        <button id="zoom-close-btn" class="btn-icon-sm" aria-label="關閉檢視">✕</button>
+      </div>
+    </div>
+    <div class="zoom-viewport" id="zoom-viewport">
+      <img id="zoom-img" src="assets/earth.jpg" alt="高倍率地球照片檢視" draggable="false">
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
