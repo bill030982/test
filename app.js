@@ -74,7 +74,7 @@ function initStarfield() {
 }
 
 /* ==========================================================================
-   2. 地球 3D 視差與懸浮響應 (3D Parallax Tilt)
+   2. 地球 3D 視差與懸浮響應 (3D Parallax Tilt & Mobile Gyroscope)
    ========================================================================== */
 function initEarthParallax() {
   const stage = document.getElementById("earth-stage");
@@ -87,6 +87,7 @@ function initEarthParallax() {
   let currentTiltX = 0;
   let currentTiltY = 0;
 
+  // 電腦端滑鼠懸浮
   stage.addEventListener("mouseenter", () => {
     isHovered = true;
   });
@@ -105,10 +106,53 @@ function initEarthParallax() {
     const mouseX = e.clientX - centerX;
     const mouseY = e.clientY - centerY;
 
-    // 計算傾斜角度 (最大 14 度)
-    targetTiltY = (mouseX / (rect.width / 2)) * 12;
-    targetTiltX = -(mouseY / (rect.height / 2)) * 12;
+    targetTiltY = (mouseX / (rect.width / 2)) * 14;
+    targetTiltX = -(mouseY / (rect.height / 2)) * 14;
   });
+
+  // 手機端單指滑動 3D 傾斜 (Touch Drag Parallax)
+  stage.addEventListener(
+    "touchmove",
+    (e) => {
+      if (e.touches.length === 1) {
+        const rect = stage.getBoundingClientRect();
+        const touch = e.touches[0];
+        const mouseX = touch.clientX - (rect.left + rect.width / 2);
+        const mouseY = touch.clientY - (rect.top + rect.height / 2);
+
+        targetTiltY = (mouseX / (rect.width / 2)) * 16;
+        targetTiltX = -(mouseY / (rect.height / 2)) * 16;
+        isHovered = true;
+      }
+    },
+    { passive: true }
+  );
+
+  stage.addEventListener("touchend", () => {
+    isHovered = false;
+    targetTiltX = 0;
+    targetTiltY = 0;
+  });
+
+  // 手機端陀螺儀體感傾斜 (DeviceOrientation Gyroscope)
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener(
+      "deviceorientation",
+      (event) => {
+        // 當使用者沒有主動按住滑動時，啟用體感晃動
+        if (!isHovered && event.gamma !== null && event.beta !== null) {
+          // gamma: 左右傾斜 (-90 ~ 90)
+          // beta: 前後傾斜 (-180 ~ 180)，一般手持視角約 45 度
+          const clampedGamma = Math.max(Math.min(event.gamma, 35), -35);
+          const clampedBeta = Math.max(Math.min(event.beta - 45, 35), -35);
+
+          targetTiltY = (clampedGamma / 35) * 12;
+          targetTiltX = -(clampedBeta / 35) * 12;
+        }
+      },
+      { passive: true }
+    );
+  }
 
   // 平滑插值動畫循環 (Lerp)
   function updateTilt() {
@@ -302,24 +346,44 @@ function initZoomModal() {
     isDragging = false;
   });
 
-  // 觸控支援 (Touch support)
+  // 觸控支援 (Touch support: 支援單指拖曳平移與雙指手勢捏合縮放 Pinch-to-Zoom)
+  let initialPinchDistance = 0;
+  let initialPinchScale = 1;
+
+  function getTouchDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   viewport.addEventListener("touchstart", (e) => {
     if (e.touches.length === 1) {
       isDragging = true;
       startX = e.touches[0].clientX - panX;
       startY = e.touches[0].clientY - panY;
+    } else if (e.touches.length === 2) {
+      isDragging = false;
+      initialPinchDistance = getTouchDistance(e.touches[0], e.touches[1]);
+      initialPinchScale = scale;
     }
-  });
+  }, { passive: true });
 
   viewport.addEventListener("touchmove", (e) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    panX = e.touches[0].clientX - startX;
-    panY = e.touches[0].clientY - startY;
-    updateTransform();
-  });
+    if (e.touches.length === 1 && isDragging) {
+      panX = e.touches[0].clientX - startX;
+      panY = e.touches[0].clientY - startY;
+      updateTransform();
+    } else if (e.touches.length === 2 && initialPinchDistance > 0) {
+      const currentDistance = getTouchDistance(e.touches[0], e.touches[1]);
+      const pinchFactor = currentDistance / initialPinchDistance;
+      scale = Math.min(Math.max(initialPinchScale * pinchFactor, 0.75), 5.0);
+      updateTransform();
+    }
+  }, { passive: true });
 
   viewport.addEventListener("touchend", () => {
     isDragging = false;
+    initialPinchDistance = 0;
   });
 }
 

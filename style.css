@@ -300,8 +300,8 @@ html, body {
 .hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: none;
   background: transparent;
@@ -313,6 +313,16 @@ html, body {
   justify-content: center;
   padding: 0;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 行動端觸控加大感應區 (確保至少 48x48px 觸控體驗) */
+.hotspot::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  pointer-events: auto;
 }
 
 .hotspot-pulse {
@@ -890,6 +900,7 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: grab;
+  touch-action: none; /* 防止行動裝置觸控縮放時觸發瀏覽器原生物理滑動 */
 }
 
 .zoom-viewport:active {
@@ -903,18 +914,23 @@ html, body {
   border-radius: 50%;
   box-shadow: 0 0 60px rgba(56, 189, 248, 0.25);
   user-select: none;
+  -webkit-user-select: none;
   transform-origin: center center;
   transition: transform 0.08s linear;
 }
 
-/* 響應式佈局適應 */
+/* 響應式佈局適應 - 平板與手機 (<= 768px) */
 @media (max-width: 768px) {
   .site-header {
-    padding: 1.25rem 1.25rem;
+    padding: 1rem 1.25rem;
   }
 
   .main-title {
-    font-size: 2.2rem;
+    font-size: 2.1rem;
+  }
+
+  .main-container {
+    padding: 1.5rem 1rem 4rem;
   }
 
   .pale-blue-dot-card {
@@ -930,12 +946,74 @@ html, body {
   }
 
   .filter-buttons {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
+    gap: 0.5rem;
   }
 
   .filter-btn {
     width: 100%;
     text-align: center;
+    padding: 0.55rem 0.6rem;
+  }
+
+  .toggle-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    justify-content: center;
+    padding: 0.55rem 0.6rem;
+  }
+
+  #open-zoom-modal {
+    grid-column: span 2;
+  }
+
+  .stage-hint {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.65rem;
+    white-space: normal;
+    text-align: center;
+    max-width: 90%;
+  }
+}
+
+/* 針對超小手機螢幕 (< 420px，例如 iPhone SE) */
+@media (max-width: 420px) {
+  .header-brand .brand-title {
+    font-size: 0.75rem;
+  }
+
+  .header-actions .btn-text {
+    display: none;
+  }
+
+  .btn-icon {
+    padding: 0.5rem;
+  }
+
+  .main-title {
+    font-size: 1.85rem;
+  }
+
+  .subtitle {
+    font-size: 0.925rem;
+  }
+
+  .filter-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .toggle-group {
+    grid-template-columns: 1fr;
+  }
+
+  #open-zoom-modal {
+    grid-column: span 1;
   }
 }
